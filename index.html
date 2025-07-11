@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner SDK Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .status.loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .current-config {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .current-config h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .banner-display {
+            margin-top: 30px;
+            min-height: 100px;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Banner SDK Tester</h1>
+        
+        <form id="sdkForm">
+            <div class="form-group">
+                <label for="domainId">Domain ID:</label>
+                <input type="text" id="domainId" placeholder="Enter your domain ID" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="version">SDK Version:</label>
+                <select id="version" required>
+                    <option value="">Select version</option>
+                    <option value="v1.3.2" selected>v1.3.2 (Latest)</option>
+                    <option value="v1.3.1">v1.3.1</option>
+                    <option value="v1.3.0">v1.3.0</option>
+                    <option value="v1.2.9">v1.2.9</option>
+                    <option value="v1.2.8">v1.2.8</option>
+                    <option value="v1.2.7">v1.2.7</option>
+                </select>
+            </div>
+            
+            <button type="submit" id="loadBtn">Load Banner SDK</button>
+        </form>
+        
+        <div id="status" class="status" style="display: none;"></div>
+        
+        <div id="currentConfig" class="current-config" style="display: none;">
+            <h3>Current Configuration</h3>
+            <p><strong>Domain ID:</strong> <span id="currentDomainId"></span></p>
+            <p><strong>Version:</strong> <span id="currentVersion"></span></p>
+            <p><strong>Script URL:</strong> <span id="currentUrl"></span></p>
+        </div>
+        
+        <div class="banner-display" id="bannerDisplay">
+            Banner will appear here after loading the SDK
+        </div>
+    </div>
+
+    <script>
+        let currentScript = null;
+        
+        document.getElementById('sdkForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const domainId = document.getElementById('domainId').value.trim();
+            const version = document.getElementById('version').value;
+            
+            if (!domainId || !version) {
+                showStatus('Please fill in all fields', 'error');
+                return;
+            }
+            
+            loadBannerSDK(domainId, version);
+        });
+        
+        function loadBannerSDK(domainId, version) {
+            const loadBtn = document.getElementById('loadBtn');
+            const statusDiv = document.getElementById('status');
+            
+            // Disable button and show loading
+            loadBtn.disabled = true;
+            loadBtn.textContent = 'Loading...';
+            showStatus('Loading Banner SDK...', 'loading');
+            
+            // Remove previous script if exists
+            if (currentScript) {
+                currentScript.remove();
+                currentScript = null;
+            }
+            
+            // Create new script element
+            const script = document.createElement('script');
+            const scriptUrl = `https://cdn.jsdelivr.net/gh/omgitsvaibhav/banner-sdk@${version}/dist/banner-sdk.js?domainId=${domainId}`;
+            
+            script.src = scriptUrl;
+            script.async = true;
+            
+            // Handle script load success
+            script.onload = function() {
+                loadBtn.disabled = false;
+                loadBtn.textContent = 'Load Banner SDK';
+                showStatus('Banner SDK loaded successfully!', 'success');
+                updateCurrentConfig(domainId, version, scriptUrl);
+                
+                // Clear banner display message
+                document.getElementById('bannerDisplay').textContent = 'Banner SDK is now active. Any banners configured for this domain should appear.';
+            };
+            
+            // Handle script load error
+            script.onerror = function() {
+                loadBtn.disabled = false;
+                loadBtn.textContent = 'Load Banner SDK';
+                showStatus('Failed to load Banner SDK. Please check the domain ID and version.', 'error');
+                
+                if (currentScript === script) {
+                    currentScript = null;
+                }
+            };
+            
+            // Add script to head
+            document.head.appendChild(script);
+            currentScript = script;
+        }
+        
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            // Auto-hide success messages after 3 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        function updateCurrentConfig(domainId, version, url) {
+            document.getElementById('currentDomainId').textContent = domainId;
+            document.getElementById('currentVersion').textContent = version;
+            document.getElementById('currentUrl').textContent = url;
+            document.getElementById('currentConfig').style.display = 'block';
+        }
+        
+        // Auto-load if URL parameters are provided
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const domainId = urlParams.get('domainId');
+            const version = urlParams.get('version');
+            
+            if (domainId) {
+                document.getElementById('domainId').value = domainId;
+                if (version) {
+                    document.getElementById('version').value = version;
+                }
+                
+                // Auto-load if both parameters are present
+                if (domainId && version) {
+                    setTimeout(() => loadBannerSDK(domainId, version), 500);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
