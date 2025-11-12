@@ -136,20 +136,22 @@
           <label for="version">SDK Version:</label>
           <select id="version" required>
             <option value="">Select version</option>
-            <option value="v1.8.1" selected>v1.8.1 (Latest)</option>
+            <option value="v2.0.0" selected>v2.0.0 (Latest)</option>
+            <option value="v1.9.9">v1.9.9</option>
+            <option value="v1.9.8">v1.9.8</option>
+            <option value="v1.9.7">v1.9.7</option>
+            <option value="v1.9.6">v1.9.6</option>
+            <option value="v1.9.5">v1.9.5</option>
+            <option value="v1.9.4">v1.9.4</option>
+            <option value="v1.9.3">v1.9.3</option>
+            <option value="v1.9.2">v1.9.2</option>
+            <option value="v1.9.1">v1.9.1</option>
+            <option value="v1.9.0">v1.9.0</option>
+            <option value="v1.8.9">v1.8.9</option>
+            <option value="v1.8.8">v1.8.8</option>
+            <option value="v1.8.3">v1.8.3</option>
             <option value="v1.8.2">v1.8.2</option>
-            <option value="v1.8.0">v1.8.0</option>
-            <option value="v1.7.3">v1.7.3</option>
             <option value="v1.7.0">v1.7.0</option>
-            <option value="v1.6.9">v1.6.9</option>
-            <option value="v1.6.8">v1.6.8</option>
-            <option value="v1.6.7">v1.6.7</option>
-            <option value="v1.4.5">v1.4.5</option>
-            <option value="v1.4.4">v1.4.4</option>
-            <option value="v1.4.3">v1.4.3</option>
-            <option value="v1.4.2">v1.4.2</option>
-            <option value="v1.4.1">v1.4.1</option>
-            <option value="v1.4.0">v1.4.0</option>
           </select>
         </div>
 
@@ -206,8 +208,8 @@
 
         // Create new script element
         const script = document.createElement("script");
-        // const scriptUrl = `https://cdn.jsdelivr.net/gh/Blutic-club/banner-sdk@${version}/dist/banner-sdk.js?domainId=${domainId}`;
-        const scriptUrl = `https://d18adlsf7yn9zn.cloudfront.net/blutic-cookie/banner-sdk.js?domainId=${domainId}`
+        const scriptUrl = `https://cdn.jsdelivr.net/gh/Blutic-club/banner-sdk@${version}/dist/banner-sdk.js?domainId=${domainId}`;
+        // const scriptUrl = `https://d18adlsf7yn9zn.cloudfront.net/blutic-cookie/banner-sdk.js?domainId=${domainId}`
 
         script.src = scriptUrl;
         script.async = true;
